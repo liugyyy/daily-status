@@ -80,6 +80,12 @@ function initInputPage() {
 
 function initDashboard() {
     var latestId = 0;
+    var notified = false; // 首次加载不弹通知
+
+    // 请求通知权限
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
 
     function fetchLatest() {
         fetch('/api/status/latest')
@@ -88,11 +94,19 @@ function initDashboard() {
                 if (!res.ok || !res.status) return;
                 var s = res.status;
                 if (s.id === latestId) return; // 无更新
+                var isNew = latestId > 0; // 首次加载不算新
                 latestId = s.id;
                 updateCards(s);
                 updateMessage(s.message);
                 var refreshEl = document.querySelector('.refresh-time');
                 if (refreshEl) refreshEl.textContent = '更新于 ' + formatTime(s.created_at);
+
+                // 新状态 → 弹通知
+                if (isNew && 'Notification' in window && Notification.permission === 'granted') {
+                    var body = '🔋' + s.battery + '%  💡' + s.alertness + '%  🍜' + s.fullness + '%  💛' + s.mood + '%';
+                    if (s.message) body += '\n💬 ' + s.message;
+                    new Notification('她更新了状态', { body: body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💛</text></svg>' });
+                }
             })
             .catch(function () { /* 静默等待 */ });
     }
