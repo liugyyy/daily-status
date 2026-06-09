@@ -80,50 +80,97 @@ function initInputPage() {
 
 function initDashboard() {
     var latestId = 0;
+    var firstLoad = true;
 
-    // 通知权限
+    // ── 通知权限 ──
+    var banner = document.getElementById('notify-banner');
+    var btn    = document.getElementById('notify-enable-btn');
+
     if ('Notification' in window) {
-        var banner = document.getElementById('notify-banner');
-        var btn   = document.getElementById('notify-enable-btn');
-        var perm  = Notification.permission;
-
-        if (perm === 'default' || perm === 'denied') {
+        var perm = Notification.permission;
+        if (perm === 'granted') {
+            if (banner) banner.style.display = 'none';
+        } else if (perm === 'default') {
             if (banner) banner.style.display = 'flex';
-            if (perm === 'denied' && banner) {
-                banner.innerHTML = '<span>🚫 通知已被阻止，请在浏览器设置中允许通知</span>';
+        } else {
+            // denied — 告诉用户怎么打开
+            if (banner) {
+                banner.innerHTML = '<span>🚫 通知已关闭，请在浏览器地址栏左侧点锁图标 → 允许通知</span>';
+                banner.style.display = 'flex';
             }
         }
-        if (btn && perm === 'default') {
-            btn.addEventListener('click', function () {
-                Notification.requestPermission().then(function (p) {
-                    if (p === 'granted' && banner) banner.style.display = 'none';
-                    if (p === 'denied' && banner) {
-                        banner.innerHTML = '<span>🚫 通知已被阻止，请在浏览器设置中允许通知</span>';
-                    }
-                });
-            });
-        }
+    } else {
+        if (banner) banner.style.display = 'none';
     }
 
+    if (btn) {
+        btn.addEventListener('click', function () {
+            Notification.requestPermission().then(function (p) {
+                if (p === 'granted') { if (banner) banner.style.display = 'none'; }
+                if (p === 'denied') {
+                    if (banner) {
+                        banner.innerHTML = '<span>🚫 通知已关闭，请在浏览器地址栏左侧点锁图标 → 允许通知</span>';
+                    }
+                }
+            });
+        });
+    }
+
+    // ── 页面内弹窗（不依赖权限，始终有效）──
+    function showInpageAlert(s) {
+        var alertEl = document.getElementById('inpage-alert');
+        var bodyEl  = document.getElementById('inpage-alert-body');
+        if (!alertEl || !bodyEl) return;
+
+        var parts = [];
+        parts.push('🔋 电量 ' + s.battery + '%');
+        parts.push('💡 清醒 ' + s.alertness + '%');
+        parts.push('🍜 饱腹 ' + s.fullness + '%');
+        parts.push('💛 心情 ' + s.mood + '%');
+        bodyEl.textContent = parts.join('  ·  ');
+        if (s.message) bodyEl.textContent += '\n💬 ' + s.message;
+
+        alertEl.classList.add('show');
+        clearTimeout(alertEl._timer);
+        alertEl._timer = setTimeout(function () {
+            alertEl.classList.remove('show');
+        }, 5000);
+    }
+
+    // ── 浏览器通知（需要权限）──
+    function showBrowserNotification(s) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        var body = '🔋' + s.battery + '%  💡' + s.alertness + '%  🍜' + s.fullness + '%  💛' + s.mood + '%';
+        if (s.message) body += '\n💬 ' + s.message;
+        try {
+            new Notification('她更新了状态', {
+                body: body,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💛</text></svg>',
+                tag: 'status-update'
+            });
+        } catch(e) { /* 忽略 */ }
+    }
+
+    // ── 轮询 ──
     function fetchLatest() {
         fetch('/api/status/latest')
             .then(function (r) { return r.json(); })
             .then(function (res) {
                 if (!res.ok || !res.status) return;
                 var s = res.status;
-                if (s.id === latestId) return; // 无更新
-                var isNew = latestId > 0; // 首次加载不算新
+                if (s.id === latestId) return;
+                var isNew = latestId > 0 && !firstLoad;
                 latestId = s.id;
+                firstLoad = false;
+
                 updateCards(s);
                 updateMessage(s.message);
                 var refreshEl = document.querySelector('.refresh-time');
                 if (refreshEl) refreshEl.textContent = '更新于 ' + formatTime(s.created_at);
 
-                // 新状态 → 弹通知
-                if (isNew && 'Notification' in window && Notification.permission === 'granted') {
-                    var body = '🔋' + s.battery + '%  💡' + s.alertness + '%  🍜' + s.fullness + '%  💛' + s.mood + '%';
-                    if (s.message) body += '\n💬 ' + s.message;
-                    new Notification('她更新了状态', { body: body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💛</text></svg>' });
+                if (isNew) {
+                    showInpageAlert(s);
+                    showBrowserNotification(s);
                 }
             })
             .catch(function () { /* 静默等待 */ });

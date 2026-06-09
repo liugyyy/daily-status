@@ -10,10 +10,18 @@
 <body>
 <div class="dashboard-container">
 
+    <!-- 新状态弹窗（页面内） -->
+    <div class="inpage-alert" id="inpage-alert">
+        <div class="inpage-alert-content">
+            <div class="inpage-alert-title">她刚更新了状态 💛</div>
+            <div class="inpage-alert-body" id="inpage-alert-body"></div>
+        </div>
+    </div>
+
     <!-- 通知权限提示条 -->
-    <div class="notify-banner" id="notify-banner" style="display:none">
-        <span>📢 她更新状态时弹窗提醒</span>
-        <button class="notify-enable-btn" id="notify-enable-btn">开启通知</button>
+    <div class="notify-banner" id="notify-banner">
+        <span>📢 不在页面时弹窗提醒你</span>
+        <button class="notify-enable-btn" id="notify-enable-btn">开启</button>
     </div>
 
     <header class="header">
@@ -23,6 +31,7 @@
     <div class="refresh-indicator">
         <span class="refresh-dot"></span>
         <span class="refresh-time">等待第一次更新…</span>
+        <span style="font-size:0.6rem;color:#ccc;margin-left:0.4rem">v2</span>
     </div>
 
     <div class="cards">

@@ -220,6 +220,33 @@ input[type="range"]::-webkit-slider-thumb:active {
 .notify-enable-btn:hover { transform: scale(1.04); }
 .notify-enable-btn:active { transform: scale(.96); }
 
+/* ===== In-Page Alert ===== */
+.inpage-alert {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    text-align: center;
+    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.inpage-alert.show { top: 1.2rem; }
+.inpage-alert-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+}
+.inpage-alert-body {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
 /* ===== Dashboard ===== */
 .dashboard-container {
     width: 100%;
