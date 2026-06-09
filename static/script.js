@@ -80,11 +80,19 @@ function initInputPage() {
 
 function initDashboard() {
     var latestId = 0;
-    var notified = false; // 首次加载不弹通知
 
-    // 请求通知权限
+    // 通知权限：未决定时显示提示条
     if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
+        var banner = document.getElementById('notify-banner');
+        var btn   = document.getElementById('notify-enable-btn');
+        if (banner) banner.style.display = 'flex';
+        if (btn) {
+            btn.addEventListener('click', function () {
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === 'granted' && banner) banner.style.display = 'none';
+                });
+            });
+        }
     }
 
     function fetchLatest() {
