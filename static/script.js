@@ -81,15 +81,25 @@ function initInputPage() {
 function initDashboard() {
     var latestId = 0;
 
-    // 通知权限：未决定时显示提示条
-    if ('Notification' in window && Notification.permission === 'default') {
+    // 通知权限
+    if ('Notification' in window) {
         var banner = document.getElementById('notify-banner');
         var btn   = document.getElementById('notify-enable-btn');
-        if (banner) banner.style.display = 'flex';
-        if (btn) {
+        var perm  = Notification.permission;
+
+        if (perm === 'default' || perm === 'denied') {
+            if (banner) banner.style.display = 'flex';
+            if (perm === 'denied' && banner) {
+                banner.innerHTML = '<span>🚫 通知已被阻止，请在浏览器设置中允许通知</span>';
+            }
+        }
+        if (btn && perm === 'default') {
             btn.addEventListener('click', function () {
-                Notification.requestPermission().then(function (permission) {
-                    if (permission === 'granted' && banner) banner.style.display = 'none';
+                Notification.requestPermission().then(function (p) {
+                    if (p === 'granted' && banner) banner.style.display = 'none';
+                    if (p === 'denied' && banner) {
+                        banner.innerHTML = '<span>🚫 通知已被阻止，请在浏览器设置中允许通知</span>';
+                    }
                 });
             });
         }
@@ -209,9 +219,12 @@ function initDashboard() {
 
 function formatTime(t) {
     if (!t) return '';
-    // SQLite datetime 格式: "2026-06-09 15:32:00"
-    var parts = t.split(' ');
-    return parts.length > 1 ? parts.pop() : t;
+    // SQLite datetime 格式: "2026-06-09 15:32:00" (UTC)
+    // 转成 ISO 格式让浏览器自动转本地时区
+    var iso = t.replace(' ', 'T') + 'Z';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return t.split(' ').pop() || t;
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
 }
 
 function escapeHtml(s) {

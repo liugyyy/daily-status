@@ -18,7 +18,7 @@ def init_db():
                 fullness   INTEGER NOT NULL DEFAULT 50,
                 mood       INTEGER NOT NULL DEFAULT 50,
                 message    TEXT    DEFAULT NULL,
-                created_at TEXT    DEFAULT (datetime('now','localtime'))
+                created_at TEXT    DEFAULT (datetime('now'))
             )
         """)
 
