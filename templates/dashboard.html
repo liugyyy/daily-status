@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>她的状态</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>">
+</head>
+<body>
+<div class="dashboard-container">
+
+    <header class="header">
+        <h1>她的实时状态</h1>
+    </header>
+
+    <div class="refresh-indicator">
+        <span class="refresh-dot"></span>
+        <span class="refresh-time">等待第一次更新…</span>
+    </div>
+
+    <div class="cards">
+        <div class="card card-battery">
+            <div class="card-label">🔋 电量</div>
+            <div class="card-value" id="val-battery">—</div>
+            <div class="card-bar"><div class="card-bar-fill" id="bar-battery" style="width:0%"></div></div>
+        </div>
+        <div class="card card-alertness">
+            <div class="card-label">💡 清醒度</div>
+            <div class="card-value" id="val-alertness">—</div>
+            <div class="card-bar"><div class="card-bar-fill" id="bar-alertness" style="width:0%"></div></div>
+        </div>
+        <div class="card card-fullness">
+            <div class="card-label">🍜 饱腹度</div>
+            <div class="card-value" id="val-fullness">—</div>
+            <div class="card-bar"><div class="card-bar-fill" id="bar-fullness" style="width:0%"></div></div>
+        </div>
+        <div class="card card-mood">
+            <div class="card-label">💛 心情</div>
+            <div class="card-value" id="val-mood">—</div>
+            <div class="card-bar"><div class="card-bar-fill" id="bar-mood" style="width:0%"></div></div>
+        </div>
+    </div>
+
+    <div class="message-card" id="message-card" style="display:none">
+        <div class="label">💬 她留了言</div>
+        <div class="text" id="message-text"></div>
+    </div>
+
+    <div class="history-section">
+        <h2>最近的记录</h2>
+        <div id="history-list"></div>
+        <button class="btn-more" id="btn-more" style="display:none">加载更多</button>
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

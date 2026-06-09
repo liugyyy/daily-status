@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>今日状态</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>">
+</head>
+<body>
+<div class="container">
+
+    <header class="header">
+        <h1>今日状态</h1>
+    </header>
+
+    <div class="slider-group">
+        <label>
+            <span>🔋 电量</span>
+            <span class="slider-value">50%</span>
+        </label>
+        <input type="range" id="slider-battery" min="0" max="100" value="50" aria-label="电量">
+    </div>
+
+    <div class="slider-group">
+        <label>
+            <span>💡 清醒度</span>
+            <span class="slider-value">50%</span>
+        </label>
+        <input type="range" id="slider-alertness" min="0" max="100" value="50" aria-label="清醒度">
+    </div>
+
+    <div class="slider-group">
+        <label>
+            <span>🍜 饱腹度</span>
+            <span class="slider-value">50%</span>
+        </label>
+        <input type="range" id="slider-fullness" min="0" max="100" value="50" aria-label="饱腹度">
+    </div>
+
+    <div class="slider-group">
+        <label>
+            <span>💛 心情</span>
+            <span class="slider-value">50%</span>
+        </label>
+        <input type="range" id="slider-mood" min="0" max="100" value="50" aria-label="心情">
+    </div>
+
+    <textarea
+        class="message-input"
+        rows="2"
+        placeholder="想说点什么…"
+        maxlength="500"
+    ></textarea>
+
+    <button class="btn-submit">发送</button>
+    <p class="sent-time"></p>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
